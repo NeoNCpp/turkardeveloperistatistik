@@ -23,8 +23,9 @@
   --bg:#0E1420;--panel:#151D2C;--panel2:#1B2537;--line:#26324A;--text:#ECE6D8;--muted:#8A93A6;
   --brass:#C9A45C;--brass-soft:rgba(201,164,92,.14);--up:#5FB98A;--down:#E0766A;--shadow:none;}
 *,*::before,*::after{box-sizing:border-box}
-html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);overscroll-behavior-y:none}
+body{margin:0;min-height:100%;background:transparent;color:var(--text);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;left:0;right:0;top:-50vh;bottom:-50vh;z-index:-1;pointer-events:none;background:var(--bg)}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--brass);outline-offset:2px}
@@ -132,8 +133,8 @@ tbody tr:hover td{background:var(--panel2)}
 .bcard:hover{border-left-color:var(--c)}
 .tip{background:var(--tipbg);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .chart .hd{fill:var(--tipbg)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:radial-gradient(1100px 620px at 85% -10%,rgba(90,160,225,.20),transparent 62%),radial-gradient(800px 500px at 10% 110%,rgba(90,160,225,.10),transparent 60%),var(--bg) fixed}}
-:root[data-theme="dark"] body{background:radial-gradient(1100px 620px at 85% -10%,rgba(90,160,225,.20),transparent 62%),radial-gradient(800px 500px at 10% 110%,rgba(90,160,225,.10),transparent 60%),var(--bg) fixed}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body::before{background:radial-gradient(1100px 620px at 85% 20%,rgba(90,160,225,.20),transparent 62%),radial-gradient(800px 500px at 10% 80%,rgba(90,160,225,.10),transparent 60%),var(--bg)}}
+:root[data-theme="dark"] body::before{background:radial-gradient(1100px 620px at 85% 20%,rgba(90,160,225,.20),transparent 62%),radial-gradient(800px 500px at 10% 80%,rgba(90,160,225,.10),transparent 60%),var(--bg)}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(6,10,18,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
 .modal.open{display:flex}
