@@ -25,6 +25,10 @@
 *,*::before,*::after{box-sizing:border-box}
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);overscroll-behavior-y:none}
 body{margin:0;min-height:100%;background:transparent;color:var(--text);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+#mx{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.3}
+:root{--mx:40,95,150;--mxh:20,60,110}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mx:45,80,120;--mxh:80,125,170}}
+:root[data-theme="dark"]{--mx:45,80,120;--mxh:80,125,170}
 body::before{content:"";position:fixed;left:0;right:0;top:-50vh;bottom:-50vh;z-index:-1;pointer-events:none;background:var(--bg)}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -182,6 +186,7 @@ textarea.in{resize:vertical;min-height:64px}
 </style>
 </head>
 <body>
+<canvas id="mx" aria-hidden="true"></canvas>
 <div class="app">
   <aside class="side">
     <div class="brand">Türkar İstatistik<small>Türkar Developer</small></div>
@@ -560,6 +565,38 @@ $('#importFile').addEventListener('change',e=>{
 let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(render,150)});
 render();
 try{window.claude?.use?.('downloads').then(d=>{window.__dl=d}).catch(()=>{})}catch(e){}
+
+/* matrix rain background */
+(function(){
+  const cv=document.getElementById('mx'),cx=cv.getContext('2d');if(!cx)return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){cv.remove();return}
+  const CH='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン0123456789TÜRKAR<>/{}[]=+*#$%';
+  const FS=16;let W,H,cols,drops,speed,rgb,rgbh,last=0;
+  function size(){
+    const d=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0);
+    cols=Math.ceil(W/FS);drops=Array.from({length:cols},()=>Math.random()*-H/FS);speed=Array.from({length:cols},()=>.35+Math.random()*.65);
+    const cs=getComputedStyle(document.documentElement);rgb=cs.getPropertyValue('--mx').trim();rgbh=cs.getPropertyValue('--mxh').trim();
+  }
+  function frame(t){
+    requestAnimationFrame(frame);
+    if(t-last<50)return;last=t;
+    cx.globalCompositeOperation='destination-out';cx.fillStyle='rgba(0,0,0,.09)';cx.fillRect(0,0,W,H);
+    cx.globalCompositeOperation='source-over';cx.font=FS+'px ui-monospace,Consolas,monospace';cx.textAlign='center';
+    for(let i=0;i<cols;i++){
+      const y=drops[i]*FS;
+      if(y>0){
+        const c=CH[Math.random()*CH.length|0];
+        cx.fillStyle=`rgba(${rgb},.55)`;cx.fillText(CH[Math.random()*CH.length|0],i*FS+FS/2,y-FS);
+        cx.fillStyle=`rgba(${rgbh},.95)`;cx.fillText(c,i*FS+FS/2,y);
+      }
+      drops[i]+=speed[i];
+      if(y>H&&Math.random()>.975){drops[i]=0;speed[i]=.35+Math.random()*.65}
+    }
+  }
+  size();addEventListener('resize',size);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',size);
+  requestAnimationFrame(frame);
+})();
 </script>
 </body>
 </html>
